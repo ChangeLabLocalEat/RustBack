@@ -27,10 +27,11 @@ jobs:
         password: ${{ secrets.AzureAppService_ContainerPassword_0a5e7dfe4470470e86411df8fb39d00a }}
 
     - name: Build and push container image to registry
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v2
       with:
         push: true
-        tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_492f93acbfc74e4b90ea5514d8afdca8 }}:${{ github.sha }}
+        context: .
+        tags: index.docker.io/guiletjulien/localeat:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
@@ -48,4 +49,4 @@ jobs:
         app-name: 'Backend-LocalEat'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_6c7e725d27fe4afda16370325ddd02b3 }}
-        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_492f93acbfc74e4b90ea5514d8afdca8 }}:${{ github.sha }}'
+        images: 'index.docker.io/guiletjulien/localeat:${{ github.sha }}'
