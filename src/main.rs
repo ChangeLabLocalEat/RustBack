@@ -22,4 +22,5 @@ fn rocket() -> _ {
         .manage(db)
         .mount("/", routes![hello])
         .mount("/", routes![create_user])
+        .mount("/", routes![api::point_api::get_all_points])
 }

@@ -1,14 +1,16 @@
 [package]
-name = "rocket-mongo-api"
+name = "back"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 rocket = {version = "0.5.0-rc.2", features = ["json"]}
+rocket_cors = "0.5.1"
 serde = "1.0.136"
 dotenv = "0.15.0"
+geojson = "*"
+reqwest = { version = "0.11", features = ["blocking","json"] }
+tokio = { version = "1.16", features = ["full"] }
 
 [dependencies.mongodb]
 version = "2.2.0"
