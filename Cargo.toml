@@ -11,6 +11,7 @@ dotenv = "0.15.0"
 geojson = "*"
 reqwest = { version = "0.11", features = ["blocking","json"] }
 tokio = { version = "1.16", features = ["full"] }
+bson = "2.8.1"
 
 [dependencies.mongodb]
 version = "2.2.0"

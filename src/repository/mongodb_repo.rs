@@ -1,6 +1,8 @@
 use std::env;
+use bson::doc;
 extern crate dotenv;
 use dotenv::dotenv;
+
 
 use mongodb::{
     bson::{extjson::de::Error},
@@ -46,7 +48,23 @@ impl MongoRepo {
     }
 
     pub fn get_points(&self, longitudeX: &str, latitudeY: &str, distanceZ: &str) -> Result<Vec<Point>, Error> {
-        let cursor = self.col_point.find(None, None).unwrap();
+        
+        let longitude_x: f64 = longitudeX.parse().unwrap();
+        let latitude_y: f64 = latitudeY.parse().unwrap();
+        let distance_z: f64 = distanceZ.parse().unwrap();
+
+        let query = doc! (
+            "location": {
+                "$near": {
+                    "$geometry": {
+                        "type": "Point" ,
+                        "coordinates": [ longitude_x , latitude_y ]
+                    },
+                    "$maxDistance": distance_z
+                }
+            }
+        );
+        let cursor = self.col_point.find(query, None).unwrap();
         let mut points: Vec<Point> = Vec::new();
         for result in cursor {
             if let Ok(point) = result {
