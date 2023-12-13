@@ -3,14 +3,14 @@ extern crate dotenv;
 use dotenv::dotenv;
 
 use mongodb::{
-    bson::{extjson::de::Error},
-    results::{ InsertOneResult},
+    bson::{extjson::de::Error, doc},
+    results::{InsertOneResult },
     sync::{Client, Collection},
 };
-use crate::models::user_model::User;
+use crate::models::{user_model::User, login_model::Login};
 
 pub struct MongoRepo {
-    col: Collection<User>,
+    col_user: Collection<User>,
 }
 
 impl MongoRepo {
@@ -22,22 +22,33 @@ impl MongoRepo {
         };
         let client = Client::with_uri_str(uri).unwrap();
         let db = client.database("rustDB");
-        let col: Collection<User> = db.collection("User");
-        MongoRepo { col }
+        let col_user: Collection<User> = db.collection("User");
+        MongoRepo { col_user }
     }
 
     pub fn create_user(&self, new_user: User) -> Result<InsertOneResult, Error> {
         let new_doc = User {
             id: None,
-            name: new_user.name,
-            location: new_user.location,
-            title: new_user.title,
+            first_name: new_user.first_name,
+            last_name: new_user.last_name,
+            email: new_user.email,
+            password: new_user.password,
+            username: new_user.username
         };
         let user = self
-            .col
+            .col_user
             .insert_one(new_doc, None)
             .ok()
             .expect("Error creating user");
         Ok(user)
+    }
+
+    pub fn get_user_by_username(&self, login : Login) -> Result<User, Error> {
+        let user = self
+                .col_user
+                .find_one(doc! {"username": login.username, "password": login.password}, None)
+                .ok()
+                .expect("Unknown login");
+        Ok(user.unwrap())
     }
 }

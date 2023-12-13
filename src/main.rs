@@ -7,7 +7,7 @@ mod repository;
 extern crate rocket;
 use rocket::{get, http::Status, serde::json::Json};
 //add imports below
-use api::user_api::create_user;
+use api::{user_api::create_user, login_api::login};
 use repository::mongodb_repo::MongoRepo;
 
 #[get("/")]
@@ -22,4 +22,5 @@ fn rocket() -> _ {
         .manage(db)
         .mount("/", routes![hello])
         .mount("/", routes![create_user])
+        .mount("/", routes![login])
 }
