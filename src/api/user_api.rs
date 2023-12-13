@@ -9,9 +9,11 @@ pub fn create_user(
 ) -> Result<Json<InsertOneResult>, Status> {
     let data = User {
         id: None,
-        name: new_user.name.to_owned(),
-        location: new_user.location.to_owned(),
-        title: new_user.title.to_owned(),
+        first_name: new_user.first_name.to_owned(),
+        last_name: new_user.last_name.to_owned(),
+        email: new_user.email.to_owned(),
+        password: new_user.password.to_owned(),
+        username: new_user.username.to_owned()
     };
     let user_detail = db.create_user(data);
     match user_detail {
