@@ -36,12 +36,12 @@ impl MongoRepo {
     pub fn create_user(&self, new_user: User) -> Result<InsertOneResult, Error> {
         let new_doc = User {
             id: None,
-            first_name: new_user.first_name,
-            last_name: new_user.last_name,
+            firstName: new_user.firstName,
+            lastName: new_user.lastName,
             email: new_user.email,
-            password: new_user.password,
-            username: new_user.username
+            password: new_user.password
         };
+
         let user = self
             .col_user
             .insert_one(new_doc, None)
@@ -49,6 +49,7 @@ impl MongoRepo {
             .expect("Error creating user");
         Ok(user)
     }
+
 
     pub fn get_points(&self, longitudeX: &str, latitudeY: &str, distanceZ: &str) -> Result<Vec<Point>, Error> {
         
@@ -77,10 +78,10 @@ impl MongoRepo {
         Ok(points)
     }
     
-    pub fn get_user_by_username(&self, login : Login) -> Result<User, Error> {
+    pub fn get_user_by_email(&self, login : Login) -> Result<User, Error> {
         let user = self
                 .col_user
-                .find_one(doc! {"username": login.username, "password": login.password}, None)
+                .find_one(doc! {"email": login.email, "password": login.password}, None)
                 .ok()
                 .expect("Unknown login");
         Ok(user.unwrap())

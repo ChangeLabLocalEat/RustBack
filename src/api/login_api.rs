@@ -16,10 +16,10 @@ pub fn login_user(
 
     let login = login.into_inner();
     let data = Login {
-        username : login.username.to_owned(),
+        email : login.email.to_owned(),
         password : login.password.to_owned()
     };
-    let user = match db.get_user_by_username(data) {
+    let user = match db.get_user_by_email(data) {
         Ok(user ) => Ok(user),
         Err(_) => Err(Status::NotFound),
     };
