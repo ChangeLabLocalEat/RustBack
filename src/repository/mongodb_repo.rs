@@ -57,6 +57,7 @@ impl MongoRepo {
         let latitude_y: f64 = latitudeY.parse().unwrap();
         let distance_z: f64 = distanceZ.parse().unwrap();
 
+        // Pue la merde à changer
         let query = doc! (
             "location": {
                 "$near": {
@@ -68,7 +69,7 @@ impl MongoRepo {
                 }
             }
         );
-        let cursor = self.col_point.find(query, None).unwrap();
+        let cursor = self.col_point.find(None, None).unwrap();
         let mut points: Vec<Point> = Vec::new();
         for result in cursor {
             if let Ok(point) = result {
