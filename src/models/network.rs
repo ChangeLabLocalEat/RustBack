@@ -20,9 +20,3 @@ pub enum ResponseBody {
     Message(String),
     jwt(String),
 }
-
-#[derive(Serialize)]
-#[serde(crate = "rocket::serde")]
-pub struct Response {
-    pub body: ResponseBody,
-}

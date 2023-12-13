@@ -1,7 +1,7 @@
 use mongodb::bson::oid::ObjectId;
 use crate::api::login_api::decode_jwt;
 use rocket::{serde::{Deserialize, Serialize}, http::Status};
-use crate::models::network::{NetworkResponse, Response, ResponseBody};
+use crate::models::network::{NetworkResponse, ResponseBody};
 use rocket::request::{Outcome, Request, FromRequest};
 use jsonwebtoken::errors::Error;
 use jsonwebtoken::errors::ErrorKind;
@@ -28,11 +28,9 @@ impl<'r> FromRequest<'r> for JWT {
 
         match req.headers().get_one("authorization") {
             None => {
-                let response = Response { 
-                    body: ResponseBody::Message(
+                let response = ResponseBody::Message(
                         String::from("Error validating JWT token - No token provided")
-                    )
-                };
+                    );
 
                 Outcome::Error((
                     Status::Unauthorized, 
@@ -43,11 +41,9 @@ impl<'r> FromRequest<'r> for JWT {
                 Ok(claims) => Outcome::Success(JWT {claims}),
                 Err(err) => match &err.kind() {
                     jsonwebtoken::errors::ErrorKind::ExpiredSignature => {
-                        let response = Response { 
-                            body: ResponseBody::Message(
+                        let response = ResponseBody::Message(
                                 format!("Error validating JWT token - Expired Token")
-                            )
-                        };
+                            );
 
                         Outcome::Error((
                             Status::Unauthorized,
@@ -55,11 +51,9 @@ impl<'r> FromRequest<'r> for JWT {
                         )) 
                     },
                     jsonwebtoken::errors::ErrorKind::InvalidToken => {
-                        let response = Response {
-                            body: ResponseBody::Message(
+                        let response = ResponseBody::Message(
                                 format!("Error validating JWT token - Invalid Token")
-                            )
-                        };
+                            );
 
                         Outcome::Error((
                             Status::Unauthorized,
@@ -67,11 +61,9 @@ impl<'r> FromRequest<'r> for JWT {
                         )) 
                     },
                     _ => {
-                        let response = Response { 
-                            body: ResponseBody::Message(
+                        let response = ResponseBody::Message(
                                 format!("Error validating JWT token - {}", err)
-                            )
-                        };
+                            );
 
                         Outcome::Error((
                             Status::Unauthorized, 

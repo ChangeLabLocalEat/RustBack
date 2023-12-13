@@ -33,7 +33,7 @@ pub fn login_user(
 pub fn login(database: &State<MongoRepo>, login: Json<Login>) -> Result<String, NetworkResponse> {
     let token = login_user(database, login)?;
 
-    let response = Response { body: ResponseBody::jwt(token) };
+    let response = ResponseBody::jwt(token) ;
 
     Ok(serde_json::to_string(&response).unwrap())
     
@@ -44,7 +44,7 @@ pub fn create_jwt(user : User) -> Result<String, Error> {
     let secret = env::var("JWT_KEY").expect("lDFZs3CszgUHA2vwBqub6DHdbEik3CAs");
 
     let expiration = Utc::now()
-        .checked_add_signed(chrono::Duration::minutes(60))
+        .checked_add_signed(chrono::Duration::seconds(60))
         .expect("Invalid timestamp")
         .timestamp();
 
