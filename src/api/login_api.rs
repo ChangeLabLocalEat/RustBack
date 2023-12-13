@@ -1,5 +1,5 @@
 use crate::models::jwt::{Claims, JWT};
-use crate::models::network::{NetworkResponse, ResponseBody, Response};
+use crate::models::network::{NetworkResponse, ResponseBody};
 use crate::{models::user_model::User, models::login_model::Login, repository::mongodb_repo::MongoRepo};
 use mongodb::results::InsertOneResult;
 use rocket::{http::Status, serde::json::Json, State};
