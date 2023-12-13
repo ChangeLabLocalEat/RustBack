@@ -6,13 +6,12 @@ use rocket::{http::Status, serde::json::Json, State};
 use chrono::Utc;
 use jsonwebtoken::errors::{Error, ErrorKind};
 use jsonwebtoken::{encode, decode, Algorithm, EncodingKey, Header, DecodingKey, Validation};
-use mongodb::bson::oid::ObjectId;
 use std::env;
 
 pub fn login_user(
     db: &State<MongoRepo>,
     login: Json<Login>,
-) -> Result<String, Status> {
+) -> Result<String, NetworkResponse> {
 
     let login = login.into_inner();
     let data = Login {
@@ -21,17 +20,17 @@ pub fn login_user(
     };
     let user = match db.get_user_by_username(data) {
         Ok(user ) => Ok(user),
-        Err(_) => Err(Status::NotFound),
+        Err(err) => Err(NetworkResponse::NotFound(err.to_string())),
     };
 
     match create_jwt(user.unwrap()) {
         Ok(token) => Ok(token),
-        Err(_) => Err(Status::BadRequest),
+        Err(err) => Err(NetworkResponse::BadRequest(err.to_string())),
     }
 }
 
 #[post("/login", format="json", data = "<login>")]
-pub fn login(database: &State<MongoRepo>, login: Json<Login>) -> Result<String, Status> {
+pub fn login(database: &State<MongoRepo>, login: Json<Login>) -> Result<String, NetworkResponse> {
     let token = login_user(database, login)?;
 
     let response = Response { body: ResponseBody::jwt(token) };
@@ -59,7 +58,7 @@ pub fn create_jwt(user : User) -> Result<String, Error> {
     encode(&header, &claims, &EncodingKey::from_secret(secret.as_bytes()))
 }
 
-fn decode_jwt(token: String) -> Result<Claims, ErrorKind> {
+pub fn decode_jwt(token: String) -> Result<Claims, ErrorKind> {
 
     let secret = env::var("JWT_KEY").expect("JWT_KEY must be set.");
     let token = token.trim_start_matches("Bearer").trim();
