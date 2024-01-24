@@ -1,15 +1,16 @@
 use std::env;
 extern crate dotenv;
+use bson::oid::ObjectId;
 use dotenv::dotenv;
 
 
 use mongodb::{
     bson::{extjson::de::Error, doc},
-    results::{InsertOneResult },
+    results::{InsertOneResult, UpdateResult },
     sync::{Client, Collection},
 };
 use crate::models::point_model::Point;
-use crate::models::location_model::Location;
+
 
 pub struct MongoRepo {
     col: Collection<User>,
@@ -86,5 +87,37 @@ impl MongoRepo {
                 .ok()
                 .expect("Unknown login");
         Ok(user.unwrap())
+    }
+
+    pub fn get_user(&self, id: &String) -> Result<User, Error> {
+        let obj_id = ObjectId::parse_str(id).unwrap();
+        let filter = doc! {"_id": obj_id};
+        let user_detail = self
+            .col
+            .find_one(filter, None)
+            .ok()
+            .expect("Error getting user's detail");
+        Ok(user_detail.unwrap())
+    }
+
+
+    pub fn update_user(&self, id: &String, new_user: User) -> Result<UpdateResult, Error> {
+        let obj_id = ObjectId::parse_str(id).unwrap();
+        let filter = doc! {"_id": obj_id};
+        let new_doc = doc! {
+            "$set":
+                {
+                    "firstName": new_user.firstName,
+                    "lastName": new_user.lastName,
+                    "password": new_user.password,
+                    "email": new_user.email,
+                },
+        };
+        let updated_doc = self
+            .col
+            .update_one(filter, new_doc, None)
+            .ok()
+            .expect("Error updating user");
+        Ok(updated_doc)
     }
 }
