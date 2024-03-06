@@ -24,4 +24,4 @@ jobs:
         app-name: 'Backend-LocalEat'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_6c7e725d27fe4afda16370325ddd02b3 }}
-        images: 'index.docker.io/guiletjulien/loxiback:2.1'
+        images: 'index.docker.io/guiletjulien/loxiback:2.2'
